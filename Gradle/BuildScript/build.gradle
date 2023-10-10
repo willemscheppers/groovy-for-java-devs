@@ -1,6 +1,6 @@
 
-project.task("helloWorld") { Task task ->
-    task.doFirst {
+project.task("helloWorld") {
+    it.doFirst {
         System.out.println "Hello World!"
     }
 }
