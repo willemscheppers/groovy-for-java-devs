@@ -4,6 +4,8 @@ buildscript {
     }
 }
 
+import groovy.xml.XmlParser
+
 task parseMavenMetadataFromNexus {
     group('xml')
     doFirst {
@@ -14,9 +16,7 @@ task parseMavenMetadataFromNexus {
         new URL(mavenMetadataUrl).withInputStream {
             def xml = new XmlParser().parse(it)
 
-            def version = xml.versioning.latest.text()
-            def name = xml.artifactId.text()
-            println " latest version of $name is $version"
+            println " latest version of ${xml.artifactId.text()} is ${xml.versioning.latest.text()}"
         }
     }
 }
