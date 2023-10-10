@@ -1,0 +1,64 @@
+buildscript {
+    dependencies {
+        classpath localGroovy()
+    }
+}
+
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+import groovy.json.JsonGenerator
+import groovy.json.JsonBuilder
+
+static class Pokemon {
+    int id
+    String name
+    String type
+}
+
+task parsePokemonFromFile {
+    group('json')
+    doFirst {
+
+        def parse = new JsonSlurper().parse(file('src/main/resources/pokemons.json'))
+
+        parse.each {
+
+            def pokemon = new Pokemon(id: it.id, name: it.name.english, type: it.type)
+            println "${pokemon.name} is a ${pokemon.type} pokemon "
+        }
+    }
+}
+
+
+
+task pokemonToJson {
+    group('json')
+    doFirst {
+        new Pokemon(id: 393, name:'Piplup', type:'Water')
+
+        String json = JsonOutput.toJson(new Pokemon(id: 393, name: 'Piplup', type: 'Water'))
+        println(JsonOutput.prettyPrint(json))
+    }
+}
+
+task pokemonToJsonFile {
+    group('json')
+    doFirst {
+
+        def pokemon = new Pokemon(id: 393, name:'Piplup', type:'Water')
+
+        def jsonGeneratorOptions = new JsonGenerator.Options()
+                .excludeFieldsByName('contentHash', 'originalClassName')
+                .build()
+
+
+        def jsonWithBuilder = new JsonBuilder(new Pokemon(id: 393, name: 'Piplup', type: 'Water'), jsonGeneratorOptions)
+                .toPrettyString()
+        new File("src/main/resources/${pokemon.name}.json").write(jsonWithBuilder)
+
+        println(JsonOutput.toJson(pokemon))
+
+
+    }
+}
+
