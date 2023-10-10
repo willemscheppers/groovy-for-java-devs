@@ -9,7 +9,7 @@ import groovy.json.JsonOutput
 import groovy.json.JsonGenerator
 import groovy.json.JsonBuilder
 
-static class Pokemon {
+class Pokemon {
     int id
     String name
     String type
@@ -60,5 +60,22 @@ task pokemonToJsonFile {
 
 
     }
+}
+
+task parseJsonPimSecret{
+    def pimsecret = new JsonSlurper().parse(file('src/main/resources/pimsecret.json'))
+    def username
+    def password
+    pimsecret.items.each{
+        if(it.fieldName=='Username'){
+            username =  it.itemValue
+        }
+        if(it.fieldName=='Password'){
+            password =  it.itemValue
+        }
+    }
+
+    println " the password for $username is $password "
+
 }
 
