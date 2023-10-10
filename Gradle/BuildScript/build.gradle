@@ -1,5 +1,5 @@
 
-project.task("helloWorld") {
+task helloWorld {
     doFirst {
         println "Hello World!"
     }
