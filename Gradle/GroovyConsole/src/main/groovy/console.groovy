@@ -11,6 +11,6 @@ def credentials = [
         Claudia  : "54321"
 ]
 
-credentials.forEach((name, password) -> {
-    System.out.println(name + " -> " + (name + ":" + password).bytes.encodeBase64())
+credentials.each({ name, password ->
+        System.out.println(name + " -> " + (name + ":" + password).bytes.encodeBase64())
 })
