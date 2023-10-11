@@ -1,1 +1,1 @@
-"willems:myPassword".getBytes().encodeBase64()
+"willems:myPassword".bytes.encodeBase64()
