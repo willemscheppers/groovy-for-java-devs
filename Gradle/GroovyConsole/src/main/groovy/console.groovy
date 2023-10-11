@@ -1,4 +1,4 @@
-Map<String, String> credentials = new HashMap<>()
+def credentials = new HashMap<>()
 credentials.put("Beatrice", "cisco123")
 credentials.put("Francis", "11111111")
 credentials.put("Dollie", "pa55w0rd")
