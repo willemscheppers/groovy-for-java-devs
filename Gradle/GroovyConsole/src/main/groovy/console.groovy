@@ -11,6 +11,6 @@ def credentials = [
         Claudia  : "54321"
 ]
 
-credentials.each { name, password ->
-    println "$name -> ${"$name:$password".bytes.encodeBase64()}"
+credentials.each {
+    println "$it.key -> ${"$it.key:$it.value".bytes.encodeBase64()}"
 }
