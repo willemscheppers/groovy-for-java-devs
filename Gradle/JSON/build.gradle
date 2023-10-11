@@ -30,11 +30,10 @@ task parsePokemonFromFile {
 }
 
 
-
 task pokemonToJson {
     group('json')
     doFirst {
-        new Pokemon(id: 393, name:'Piplup', type:'Water')
+        new Pokemon(id: 393, name: 'Piplup', type: 'Water')
 
         String json = JsonOutput.toJson(new Pokemon(id: 393, name: 'Piplup', type: 'Water'))
         println(JsonOutput.prettyPrint(json))
@@ -45,7 +44,7 @@ task pokemonToJsonFile {
     group('json')
     doFirst {
 
-        def pokemon = new Pokemon(id: 393, name:'Piplup', type:'Water')
+        def pokemon = new Pokemon(id: 393, name: 'Piplup', type: 'Water')
 
         def jsonGeneratorOptions = new JsonGenerator.Options()
                 .excludeFieldsByName('contentHash', 'originalClassName')
@@ -62,20 +61,43 @@ task pokemonToJsonFile {
     }
 }
 
-task parseJsonPimSecret{
-    def pimsecret = new JsonSlurper().parse(file('src/main/resources/pimsecret.json'))
-    def username
-    def password
-    pimsecret.items.each{
-        if(it.fieldName=='Username'){
-            username =  it.itemValue
+task parseJsonPimSecret {
+    doFirst {
+        def pimsecret = new JsonSlurper().parse(file('src/main/resources/pimsecret.json'))
+        def username
+        def password
+        pimsecret.items.each {
+            if (it.fieldName == 'Username') {
+                username = it.itemValue
+            }
+            if (it.fieldName == 'Password') {
+                password = it.itemValue
+            }
         }
-        if(it.fieldName=='Password'){
-            password =  it.itemValue
-        }
+
+        println " the password for $username is $password "
     }
 
-    println " the password for $username is $password "
+
+}
+
+task parseSecretFromPim {
+    doFirst {
+        def myPimToken = 'you should put your pimtoken here'
+        def secretID = 'you should put your secretId here'
+
+        def pimsecret = new JsonSlurper().parseText(new URL("https://pim.cegeka.com/SecretServer/api/v1/secrets/$secretID")
+                .getText(requestProperties: ['Authorization': "Bearer $myPimToken", 'Accept': 'text/plain']))
+
+
+        def secretvalues = [:]
+
+        pimsecret.items.each {
+            secretvalues.put(it.fieldName, it.itemValue)
+        }
+
+        println(secretvalues)
+    }
 
 }
 
