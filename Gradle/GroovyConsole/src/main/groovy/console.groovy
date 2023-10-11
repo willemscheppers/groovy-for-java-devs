@@ -12,5 +12,5 @@ def credentials = [
 ]
 
 credentials.each { name, password ->
-    println name + " -> " + (name + ":" + password).bytes.encodeBase64()
+    println name + " -> " + "$name:$password".bytes.encodeBase64()
 }
