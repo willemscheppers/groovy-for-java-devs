@@ -1,0 +1,103 @@
+buildscript {
+    dependencies {
+        classpath localGroovy()
+    }
+}
+
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+import groovy.json.JsonGenerator
+import groovy.json.JsonBuilder
+
+class Pokemon {
+    int id
+    String name
+    String type
+}
+
+task parsePokemonFromFile {
+    group('json')
+    doFirst {
+
+        def parse = new JsonSlurper().parse(file('src/main/resources/pokemons.json'))
+
+        parse.each {
+
+            def pokemon = new Pokemon(id: it.id, name: it.name.english, type: it.type)
+            println "${pokemon.name} is a ${pokemon.type} pokemon "
+        }
+    }
+}
+
+
+task pokemonToJson {
+    group('json')
+    doFirst {
+        new Pokemon(id: 393, name: 'Piplup', type: 'Water')
+
+        String json = JsonOutput.toJson(new Pokemon(id: 393, name: 'Piplup', type: 'Water'))
+        println(JsonOutput.prettyPrint(json))
+    }
+}
+
+task pokemonToJsonFile {
+    group('json')
+    doFirst {
+
+        def pokemon = new Pokemon(id: 393, name: 'Piplup', type: 'Water')
+
+        def jsonGeneratorOptions = new JsonGenerator.Options()
+                .excludeFieldsByName('contentHash', 'originalClassName')
+                .build()
+
+
+        def jsonWithBuilder = new JsonBuilder(new Pokemon(id: 393, name: 'Piplup', type: 'Water'), jsonGeneratorOptions)
+                .toPrettyString()
+        new File("src/main/resources/${pokemon.name}.json").write(jsonWithBuilder)
+
+        println(JsonOutput.toJson(pokemon))
+
+
+    }
+}
+
+task parseJsonPimSecret {
+    doFirst {
+        def pimsecret = new JsonSlurper().parse(file('src/main/resources/pimsecret.json'))
+        def username
+        def password
+        pimsecret.items.each {
+            if (it.fieldName == 'Username') {
+                username = it.itemValue
+            }
+            if (it.fieldName == 'Password') {
+                password = it.itemValue
+            }
+        }
+
+        println " the password for $username is $password "
+    }
+
+
+}
+
+task parseSecretFromPim {
+    doFirst {
+        def myPimToken = 'you should put your pimtoken here'
+        def secretID = 'you should put your secretId here'
+
+        def pimsecret = new JsonSlurper().parseText(new URL("https://pim.cegeka.com/SecretServer/api/v1/secrets/$secretID")
+                .getText(requestProperties: ['Authorization': "Bearer $myPimToken", 'Accept': 'text/plain']))
+
+
+        def secretvalues = [:]
+
+        pimsecret.items.each {
+            secretvalues.put(it.fieldName, it.itemValue)
+        }
+
+        println(secretvalues)
+    }
+
+}
+

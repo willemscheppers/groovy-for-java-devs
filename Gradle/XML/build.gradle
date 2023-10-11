@@ -1,0 +1,23 @@
+buildscript {
+    dependencies {
+        classpath localGroovy()
+    }
+}
+
+import groovy.xml.XmlParser
+
+task parseMavenMetadataFromNexus {
+    group('xml')
+    doFirst {
+
+        def mavenMetadataUrl =
+                'https://nexus.cegeka.be/nexus/service/local/repo_groups/public/content/javax/faces/jsf-api/maven-metadata.xml'
+
+        new URL(mavenMetadataUrl).withInputStream {
+            def xml = new XmlParser().parse(it)
+
+            println " latest version of ${xml.artifactId.text()} is ${xml.versioning.latest.text()}"
+        }
+    }
+}
+
